@@ -13,8 +13,7 @@ void mexFunction(int nhls, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	//calculate checksum
 	int i;
 	uint8_t chk=0;
-	for (i=0; i<len+1; i++)
-	{
+	for (i=0; i<len+1; i++) {
 		//mexPrintf("chk = %d\n", chk);
 		chk+=head[i+2];
 	}

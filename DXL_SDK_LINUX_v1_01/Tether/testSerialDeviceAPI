@@ -1,5 +1,0 @@
-clear all
-
-serialDeviceAPI('connect','/dev/ttyUSB0',1000000);
-
-packet=uint8[255 255 1 4 3 3 

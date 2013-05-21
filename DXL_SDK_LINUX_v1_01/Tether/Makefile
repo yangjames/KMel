@@ -1,17 +1,16 @@
-OBJS		= SerialDevice.o
-SRCS		= $(OBJS:.o=.cc)
-MEXEXT		= $(shell mexext)
-INCLUDEDIRS	= -I./
-CFLAGS		= $(INCLUDEDIRS) -Wall -O2
+#CFLAGS		= -Wall -O2 -lncurses
 
-CC			= g++
-	
-%.o: %.cc
-	$(CC) -c -fPIC $^ $(CFLAGS)
+#CC			= gcc
 
-SerialDeviceAPI.$(MEXEXT): SerialDeviceAPI.cc SerialDevice.o
-	mex -O $^  $(INCLUDEDIRS)
-	
-clean:
-	rm -f $(OBJS) SerialDeviceAPI.$(MEXEXT)
-	@echo "file deleted."
+#getch: getch.c
+#	$(CC) -o $@ $^ $(CFLAGS)
+
+##################################
+# FOR COMPILING MEX
+##################################
+
+CFLAGS	= -lncurses
+MEXEXT	= $(shell mexext)
+
+getch: getch.c
+	mex -O $^ $(CFLAGS)
