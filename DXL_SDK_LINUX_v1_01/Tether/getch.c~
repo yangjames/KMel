@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <ncurses.h>
-#include "mex.h"
+//#include "mex.h"
 
-
+/*
 void mexFunction(int nhls, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	if (nrhs != 0)
 		mexErrMsgTxt("This function does not take any arguments.");
@@ -13,8 +13,8 @@ void mexFunction(int nhls, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	((char*)mxGetData(plhs[0]))[0] = c;
 	return;
 }
+*/
 
-/*
 void main(void) {
 	char c;
 	while(1) {
@@ -23,4 +23,4 @@ void main(void) {
 			printf("%c",c);
 	}
 }
-*/
+
