@@ -1,4 +1,4 @@
-function load_data=Tether(port,baud)
+function Tether(port,baud)
     
     
 
@@ -28,9 +28,8 @@ function load_data=Tether(port,baud)
     Kp=3;
     Ki=0;
     Kd=0;
-    counter = 0;
-    status=setSpeed(1,0);
     
+    status=setSpeed(1,0);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %    The main script
@@ -39,15 +38,10 @@ function load_data=Tether(port,baud)
     setSpeed(1, speed);
     tic; %start the timer
     while(toc <= 5)
-       counter = counter + 1;
-       curr_packet=makeReadable(getCurrLoad(1));
-       cur_load = curr_packet(3);
-       disp(['load: ' num2str(getCurrLoad(1))]);
-       load_data(counter) = cur_load;
-       if toc >= 2.5
-          setSpeed(1, 1023);
-       end
        
+       curr_packet=makeReadable(getCurrLoad(1));
+       cur_load = curr_packet();
+       disp(['load: ' num2str(getCurrLoad(1))]);
     end
     setSpeed(1, 0);
     

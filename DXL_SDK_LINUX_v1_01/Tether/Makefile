@@ -12,5 +12,11 @@
 CFLAGS	= -lncurses
 MEXEXT	= $(shell mexext)
 
+all: getch setCheckSum
 getch: getch.c
 	mex -O $^ $(CFLAGS)
+
+setCheckSum: setCheckSum.cc
+	mex -O $^
+
+
