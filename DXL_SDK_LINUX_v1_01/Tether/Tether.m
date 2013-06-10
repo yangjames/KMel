@@ -18,27 +18,20 @@ function Tether(port,baud)
     status=setSpeed(1,0)
     prev_t=0;
     t=0;
-    Kp=0.1;
-    com_t=32;
+    Kp=3;
     while(1)
-        %in=getch();
-        %if in~=255
-            
-       
         a=makeReadable(getCurrLoad(1));
         if ~isempty(a)
             if a(1)~=0
                 if length(a)==3
                     t=getTorque(a(3));
-                    disp(t)
-                    d_t=com_t-t;
-                    spd=Kp*d_t;
+                    d_t=t-prev_t;
+                    spd=-Kp*d_t;
                     setSpeed(1,spd);
                     prev_t=t;
                 end
             end
         end
-        
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
