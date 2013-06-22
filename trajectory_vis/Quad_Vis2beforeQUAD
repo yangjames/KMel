@@ -22,7 +22,7 @@ function varargout = Quad_Vis2(varargin)
 
 % Edit the above text to modify the response to help Quad_Vis2
 
-% Last Modified by GUIDE v2.5 20-Jun-2013 16:23:54
+% Last Modified by GUIDE v2.5 18-Jun-2013 14:43:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -50,8 +50,8 @@ function Quad_Vis2_OpeningFcn(hObject, eventdata, handles, varargin)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
     % varargin   command line arguments to Quad_Vis2 (see VARARGIN)
-    global traj_data FRAME FLAGS pa pb pc pd shafta shaftb orientation
-    traj_data = NaN;
+    global QUAD FRAME FLAGS pa pb pc pd shafta shaftb orientation
+    QUAD={};
     FRAME=1;
     PLAYFLAG=0;
     FFLAG=0;
@@ -133,9 +133,9 @@ function deletetrajbutton_Callback(hObject, eventdata, handles)
     % hObject    handle to deletetrajbutton (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
-    global traj_data
+    global QUAD
     cla reset;
-    names=get(handles.trajlist,'string');
+    names=get(handles.trajlist,'string')
     value=get(handles.trajlist,'value');
     temp=char(names);
     temp(value,:)=[];
@@ -144,13 +144,13 @@ function deletetrajbutton_Callback(hObject, eventdata, handles)
     end
     if value>size(temp,1)
         set(handles.trajlist,'string',cellstr(temp),'value',size(temp,1))
-        if ~isempty(traj_data)
-            traj_data(value)=[];
+        if ~isempty(QUAD)
+            QUAD(value)=[];
         end
     else
         set(handles.trajlist,'string',cellstr(temp))
-        if ~isempty(traj_data)
-            traj_data(value)=[];
+        if ~isempty(QUAD)
+            QUAD(value)=[];
         end
     end
     axes(handles.mainaxes);
@@ -162,10 +162,10 @@ function playbutton_Callback(hObject, eventdata, handles)
     % hObject    handle to playbutton (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
-    global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orientation
+    global QUAD numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orientation
     if ~any(FLAGS);
         FLAGS = [1,0,0];
-        pauseVal = traj_data(1).delT;
+        pauseVal = QUAD{1}.delT;
     end
     play(handles)
     
@@ -176,15 +176,15 @@ function framebackbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to framebackbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FRAME FLAGS traj_data
+    global FRAME FLAGS QUAD
     FLAGS = [0,0,0];
     if(FRAME >= 2)
         FRAME = FRAME -1;
         plotQuads(handles);
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
+        set(handles.timetext, 'String', strcat(num2str(QUAD{1}.delT*(FRAME-1)), 's'));
         set(handles.frametext, 'String', num2str(FRAME));
     elseif(FRAME==1)
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
+        set(handles.timetext, 'String', strcat(num2str(QUAD{1}.delT*(FRAME-1)), 's'));
         set(handles.frametext, 'String', num2str(FRAME));
     end
 
@@ -194,15 +194,15 @@ function framefwdbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to framefwdbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FRAME FLAGS traj_data numFrames
+    global FRAME FLAGS QUAD numFrames
     FLAGS = [0,0,0];
     if(FRAME < numFrames-2)
-        FRAME = FRAME +1;
+        FRAME = FRAME -1;
         plotQuads(handles);
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
+        set(handles.timetext, 'String', strcat(num2str(QUAD{1}.delT*(FRAME-1)), 's'));
         set(handles.frametext, 'String', num2str(FRAME));
     elseif(FRAME>=numFrames-2)
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
+        set(handles.timetext, 'String', strcat(num2str(QUAD{1}.delT*(FRAME-1)), 's'));
         set(handles.frametext, 'String', num2str(FRAME));
     end
 
@@ -211,10 +211,10 @@ function reversebutton_Callback(hObject, eventdata, handles)
 % hObject    handle to reversebutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FLAGS pauseVal sliderVal traj_data
-        if ~isempty(traj_data)
+    global FLAGS pauseVal sliderVal QUAD
+        if ~isempty(QUAD)
             FLAGS = [0,0,1];
-            pauseVal = (1-sliderVal)*traj_data(1).delT*2;
+            pauseVal = (1-sliderVal)*QUAD{1}.delT*2;
             play(handles);
         end
 
@@ -223,10 +223,10 @@ function forwardbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to forwardbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FLAGS pauseVal sliderVal traj_data
-    if ~isempty(traj_data)
+    global FLAGS pauseVal sliderVal QUAD
+    if ~isempty(QUAD)
         FLAGS = [0,1,0];
-        pauseVal = (1-sliderVal)*traj_data(1).delT*2;
+        pauseVal = (1-sliderVal)*QUAD{1}.delT*2;
         play(handles);
     end
 
@@ -258,10 +258,10 @@ function beginningbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to beginningbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FRAME traj_data
+    global FRAME QUAD
     FRAME=1;
     plotQuads(handles);
-    set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
+    set(handles.timetext, 'String', strcat(num2str(QUAD{1}.delT*(FRAME-1)), 's'));
     set(handles.frametext, 'String', num2str(FRAME));
 
 % --- Executes on selection change in trajectorylist.
@@ -297,12 +297,17 @@ cla reset;
 menu_list=get(handles.trajectorylist,'String');
 menu_val=get(handles.trajectorylist,'Value');
 if ~isequal(menu_list{menu_val},'Select Quad Trajectory')
-    %load data and initalize other fields
+
     traj_data = load_traj_data(menu_list{menu_val});
-    numFrames = length(traj_data(1).timer);
     
-    display_data(traj_data, handles)%display traj info
-    
+%     data = load(['trajectories/' menu_list{menu_val}]); %loads traj_data as struct 's' (not robust to assume this)
+%     for id=1:length(data.s)
+%         rmfield(data.s, 'vel'); %remove velocity so we can adjust speed of traj
+%         QUAD{id}=data.s(id);
+%         QUAD{id}.vel=(QUAD{id}.pos(:,2:end)-QUAD{id}.pos(:,1:end-1))/QUAD{id}.delT;
+%         QUAD{id}.a=(QUAD{id}.vel(:,2:end)-QUAD{id}.vel(:,1:end-1))/QUAD{id}.delT;
+%         numFrames = length(QUAD{id}.timer);
+%     end
     
     %set up axes
     xmin = zeros(1,length(traj_data));
@@ -347,44 +352,3 @@ function pausebutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     global FLAGS
     FLAGS = [0,0,0];
-
-
-
-function new_delT_text_Callback(hObject, eventdata, handles)
-% hObject    handle to new_delT_text (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-    global traj_data 
-    new_delT = str2double(get(hObject,'String')); %returns contents of new_delT_text as a double
-    traj_data = load_traj_data(traj_data, new_delT);
-    display_data(traj_data, handles)%display traj info
-
-% --- Executes during object creation, after setting all properties.
-function new_delT_text_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to new_delT_text (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-global traj_data
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in cylindersbutton.
-function cylindersbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to cylindersbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global traj_data
-for i=1:length(traj_data)
-    if traj_data(i).cyl_flag == 0
-        traj_data(i).cyl_flag = 1;
-    elseif traj_data(i).cyl_flag == 1
-        traj_data(i).cyl_flag = 0;
-    end
-end
-plotQuads(handles);
