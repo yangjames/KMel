@@ -1,13 +1,14 @@
 function play(handles)
-global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orientation
-    
-%     get(handles.timetext)
-%     get(handles.frametext)
+%this function facilitates the plotting of multiple frames, considering the
+%timestep and any other interuptions in playing the trajectory
+
+    global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orientation
+
     new_delay = 0;
     timeToPlot = 0.002; %this value was assigned using guess and check.
     tic;
     if FLAGS == [1,0,0] %normal play
-            while (FLAGS==[1,0,0]) & (FRAME <= numFrames -2)
+            while (FLAGS==[1,0,0]) & (FRAME<=numFrames-2)
                 prePlotTime=toc-new_delay;
                 if pauseVal - prePlotTime > timeToPlot
                     plotQuads(handles);

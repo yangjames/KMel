@@ -65,10 +65,11 @@ function Quad_Vis2_OpeningFcn(hObject, eventdata, handles, varargin)
     set(handles.quadtype,'String',quadtypelist)
     
     %% QUAD PLOT VARIABLES
-    rotrad=2*0.0254;
-    quadwidth=5*sqrt(2)*0.0254;
+    quadwidth=12*0.0254; % in inches
+
     % circle for the rotors
     thetad=(0:0.1:2*pi)';
+    rotrad=3*0.0254; % in inches
     rotorx=rotrad*sin(thetad);
     rotory=rotrad*cos(thetad);
     rotorz=zeros(length(thetad),1);
@@ -85,7 +86,7 @@ function Quad_Vis2_OpeningFcn(hObject, eventdata, handles, varargin)
     shaftb=[shaft1 shaft shaft1];
     % orientation vector
     orientation=[[0 0]' [0 0]' [0 .2]'];
-    downwashscale=(quadwidth/2+rotrad);
+    downwashscale=1/(quadwidth/2+rotrad);
     downwashsize=1;
     
     % Choose default command line output for Quad_Vis
@@ -402,25 +403,21 @@ function quadtype_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns quadtype contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from quadtype
-global pa pb pc pd shafta shaftb downwashscale downwashsize
+global pa pb pc pd shafta shaftb
 
 menu_list=get(handles.quadtype,'String');
 menu_val=get(handles.quadtype,'Value');
 if isequal(menu_list{menu_val},'Toy')
     rotrad=8.5/2*0.0254;
     quadwidth=10*sqrt(2)*0.0254;
-    downwashscale=(quadwidth/2+rotrad);
+    downwashscale=1/(quadwidth/2+rotrad);
     downwashsize=1;
 elseif isequal(menu_list{menu_val},'Nano+')
     rotrad=2*0.0254;
     quadwidth=5*sqrt(2)*0.0254;
-    downwashscale=(quadwidth/2+rotrad);
-    downwashsize=1;
 else
-%     rotrad=2*0.0254;
-%     quadwidth=5*sqrt(2)*0.0254;
-%     downwashscale=(quadwidth/2+rotrad);
-%     downwashsize=1;
+    rotrad=2*0.0254;
+    quadwidth=5*sqrt(2)*0.0254;
 end
 thetad=(0:0.1:2*pi)';
 rotorx=rotrad*sin(thetad);
@@ -431,9 +428,6 @@ pa=[quadwidth/2+rotorx rotory rotorz];
 pb=[-quadwidth/2+rotorx rotory rotorz];
 pc=[rotorx quadwidth/2+rotory rotorz];
 pd=[rotorx -quadwidth/2+rotory rotorz];
-shaft=(-quadwidth/2:0.1:quadwidth/2)';
-shaft1=zeros(length(shaft),1);
-shafta=[shaft shaft1 shaft1];
 shaftb=[shaft1 shaft shaft1];
 plotQuads(handles);
 

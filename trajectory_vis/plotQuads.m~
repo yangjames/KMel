@@ -25,7 +25,11 @@ function plotQuads(handles)
     for i=1:length(traj_data)
         %get rotation matrix
         [roll,pitch]=getAngles(traj_data(i).a(:,FRAME),traj_data(i).yaw(FRAME));
-        R=getRot(traj_data(i).yaw(FRAME),roll,pitch);
+        % add in the extra roll and pitch angles
+        roll = roll + traj_data(i).extraRoll(FRAME);
+        pitch = pitch + traj_data(i).extraPitch(FRAME);
+        
+        R=getRot(traj_data(i).yaw(FRAME),roll,pitch); % the rotation matrix
         % get new orientations
         tpa=R*pa';
         tpb=R*pb';
