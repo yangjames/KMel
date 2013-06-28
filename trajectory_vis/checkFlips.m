@@ -1,8 +1,8 @@
 function new_s = checkFlips(s)
 %this function creates a flipFlags filed for each quad and stores flip data
 % for each frame in this field
-
-numFlipFrames = .5/s(1).delT; % assuming a flip is .5s
+flipTime = .75;
+numFlipFrames = flipTime/s(1).delT;
 n = length(s(1).yaw);
 
 for i=1:length(s)
@@ -13,10 +13,10 @@ for i=1:length(s)
                 case 1
                     %barrel roll left
                     s(i).flipFlags(j:j+numFlipFrames) = 1;
-                case 3
+                case 5
                     %barrel roll right
                     s(i).flipFlags(j:j+numFlipFrames) = 3;
-                case 5
+                case 3
                     %front flip
                     s(i).flipFlags(j:j+numFlipFrames) = 5;
                 case 7

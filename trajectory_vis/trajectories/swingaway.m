@@ -55,6 +55,7 @@ n_points = length(tfinal);
 roll_extra  = zeros(10,n_points);
 pitch_extra = zeros(10,n_points);
 flip_cmd = zeros(10,n_points);
+flip_cmd(5, 50) = 1;
 
 %% STRUCTURE
 
