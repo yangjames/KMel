@@ -12,7 +12,7 @@ for i=1:length(v1)
     end
 end
 
-[max_diff, index] = max(per_diff)
+[max_diff, index] = max(per_diff);
 if(max_diff > per_thres)
     error('velocities differ by more than %2d percent. Check input data', per_thres*100);
 else

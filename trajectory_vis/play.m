@@ -24,9 +24,9 @@ function new_frame = play(handles, FRAME)
                 pause(new_delay);
                 
                 %account for FRAME edge case
-                if FRAME==numFrames-2
+                if FRAME>=numFrames-2
                     FLAGS = [0,0,0];
-                    Quad_Vis2('beginningbutton_Callback',0,0,handles);
+                    %Quad_Vis2('beginningbutton_Callback',0,0,handles);
                 else
                     FRAME=FRAME+1;
                 end

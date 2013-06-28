@@ -23,11 +23,18 @@ function plotQuads(handles, FRAME)
     end
     
     for i=1:length(traj_data)
+        
+        %check for flip_cmd
+        if traj_data(i).flip_cmd(FRAME) ~= 0
+            
+            
+        end
+        
         %get rotation matrix
         [roll,pitch]=getAngles(traj_data(i).a(:,FRAME),traj_data(i).yaw(FRAME));
         % add in the extra roll and pitch angles
-        roll = roll + traj_data(i).extra_roll(FRAME);
-        pitch = pitch + traj_data(i).extra_pitch(FRAME);
+        roll = roll + traj_data(i).roll_extra(FRAME);
+        pitch = pitch + traj_data(i).pitch_extra(FRAME);
         
         R=getRot(traj_data(i).yaw(FRAME),roll,pitch); % the rotation matrix
         % get new orientations
@@ -66,7 +73,27 @@ function plotQuads(handles, FRAME)
                                     'YData',[0 0], ...
                                     'ZData',[0 0; 0 0])
         end
+
+        % set the color of the rotors according to if there are any flips
+        % occuring
         
+%         switch traj_data(i).flipFlags(FRAME)
+%             case 0
+%                 set(traj_data(i).rotaplot, 'Color', 'b');
+%                 set(traj_data(i).rotbplot, 'Color', 'r');
+%                 set(traj_data(i).rotcplot, 'Color', 'r');
+%                 set(traj_data(i).rotdplot, 'Color', 'r');
+%             case 1
+%                 set(traj_data(i).rotbplot, 'Color', 'g');
+%             case 3
+%                 set(traj_data(i).rotdplot, 'Color', 'g');
+%             case 5
+%                 set(traj_data(i).rotaplot, 'Color', 'g');
+%             case 7
+%                 set(traj_data(i).rotcplot, 'Color', 'g');
+%         end
+%             
+    end
         % replot quadrotor blades
         set(traj_data(i).rotaplot,'XData',tpa(1,:)+traj_data(i).pos(1,FRAME), ...
                             'YData',tpa(2,:)+traj_data(i).pos(2,FRAME), ...
@@ -95,7 +122,4 @@ function plotQuads(handles, FRAME)
         set(traj_data(i).orientation,'XData',torientation(1,:)+traj_data(i).pos(1,FRAME), ...
                                 'YData',torientation(2,:)+traj_data(i).pos(2,FRAME), ...
                                 'ZData',torientation(3,:)+traj_data(i).pos(3,FRAME));
-    end
-    
-
 end

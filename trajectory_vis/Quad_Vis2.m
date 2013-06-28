@@ -172,7 +172,7 @@ function playbutton_Callback(hObject, eventdata, handles)
         FLAGS = [1,0,0];
         pauseVal = traj_data(1).delT;
     end
-    FRAME = play(handles, FRAME)
+    FRAME = play(handles, FRAME);
     
 
 

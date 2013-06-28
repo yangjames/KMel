@@ -10,25 +10,27 @@ global rotrad quadwidth
 if nargin == 1 %load new trajectory
     traj_name = varargin{1};
     data = load(['trajectories/', traj_name]);
-    %data.s = rmfield(data.s, 'vel'); %remove initial velocity field
     s = data.s;
+    
     for i=1:length(s)
         s(i).v=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
         % check if velocities are equal
         s(i).vel = s(i).vel(:,1:end-1);
-        compareVelocities(s(i).vel, s(i).v)
+        compareVelocities(s(i).vel, s(i).v);
         s(i).vel = s(i).v;
         s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
         s(i).cyl_flag =0;
-        if (isfield(s(i), {'extra_roll', 'extra_pitch'}) == [0 0]) |...
-                (isempty(s(i).extra_roll) && isempty(s(i).extra_pitch))
-            s(i).extra_roll = zeros(1, length(s(i).yaw));
-            s(i).extra_pitch = zeros(1, length(s(i).yaw));
+        if (isfield(s(i), {'roll_extra', 'pitch_extra', 'flip_cmd'}) == [0 0 0]) |...
+                (isempty(s(i).roll_extra) && isempty(s(i).pitch_extra) && isempty(s(i).flip_cmd))
+            s(i).roll_extra = zeros(1, length(s(i).yaw));
+            s(i).pitch_extra = zeros(1, length(s(i).yaw));
+            s(i).flip_cmd = zeros(1, length(s(i).yaw));
         else
         end
     end
-    
-   traj_data=s;
+    %s = checkFlips(s);
+    %check_traj(s);
+    traj_data=s;
 elseif nargin == 2 %update an existing trajectory
     s = varargin{1};
     new_delT = varargin{2};
@@ -46,7 +48,8 @@ elseif nargin == 2 %update an existing trajectory
         s(i).vel=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
         s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
     end
-    
+    %s = checkFlips;
+    %check_traj(s);
     traj_data=s;
 end
 [traj_data(1).minXY traj_data(1).minXYZ] = minDistance(traj_data, rotrad, quadwidth);
