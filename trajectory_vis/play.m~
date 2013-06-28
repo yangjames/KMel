@@ -1,18 +1,17 @@
-function play(handles)
+function new_frame = play(handles, FRAME)
 %this function facilitates the plotting of multiple frames, considering the
-%timestep 
-global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orientation
-    
-%     get(handles.timetext)
-%     get(handles.frametext)
+%timestep and any other interuptions in playing the trajectory
+
+    global traj_data numFrames pauseVal FLAGS
+
     new_delay = 0;
     timeToPlot = 0.002; %this value was assigned using guess and check.
     tic;
     if FLAGS == [1,0,0] %normal play
-            while (FLAGS==[1,0,0]) & (FRAME <= numFrames -2)
+            while (FLAGS==[1,0,0]) & (FRAME<=numFrames-2)
                 prePlotTime=toc-new_delay;
                 if pauseVal - prePlotTime > timeToPlot
-                    plotQuads(handles);
+                    plotQuads(handles, FRAME);
                     %disp('plotted');
                 else
                     %disp('notplotted');
@@ -37,10 +36,7 @@ global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orient
             while any(FLAGS) & FRAME >= 2
                 prePlotTime=toc-new_delay;
                 if pauseVal - prePlotTime > timeToPlot
-                    plotQuads(handles);
-                    disp('plotted');
-                else
-                    disp('notplotted');
+                    plotQuads(handles, FRAME);
                 end
                 set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
                 set(handles.frametext, 'String', num2str(FRAME));
@@ -52,8 +48,8 @@ global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orient
                 % FRAME edge case
                 FRAME=FRAME-1;
                 if(FRAME==1)
-                    set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
-                    set(handles.frametext, 'String', num2str(FRAME));
+                    set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's/', num2str(numFrames*traj_data(1).delT));
+                    set(handles.frametext, 'String', num2str(FRAME), '/', num2str(numFrames));
                     FLAGS=[0,0,0];
                 end
                     
@@ -62,10 +58,7 @@ global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orient
             while any(FLAGS) & FRAME < numFrames -2
                 prePlotTime=toc-new_delay;
                 if pauseVal - prePlotTime > timeToPlot
-                    plotQuads(handles);
-                    disp('plotted');
-                else
-                    disp('notplotted');
+                    plotQuads(handles, FRAME);
                 end
                 set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
                 set(handles.frametext, 'String', num2str(FRAME));
@@ -84,5 +77,5 @@ global traj_data numFrames pauseVal FLAGS FRAME pa pb pc pd shafta shaftb orient
             end
     else
     end
-    
+    new_frame = FRAME;
 end

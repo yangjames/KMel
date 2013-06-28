@@ -7,5 +7,7 @@ set(handles.minxydist_text, 'String', [num2str(traj_data(1).minXY), ' m']);
 set(handles.minxyzdist_text, 'String', [num2str(traj_data(1).minXYZ), ' m']);
 set(handles.minthrust_text, 'String', [num2str(traj_data(1).minThrust), ' mg']);
 set(handles.maxthrust_text, 'String', [num2str(traj_data(1).maxThrust), ' mg']);
+set(handles.maxroll_text, 'String', [num2str(traj_data(1).maxRoll*(180/pi)), ' deg']);
+set(handles.maxpitch_text, 'String', [num2str(traj_data(1).maxPitch*(180/pi)), ' deg']);
 
 end

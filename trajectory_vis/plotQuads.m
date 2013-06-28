@@ -1,6 +1,6 @@
-function plotQuads(handles)
+function plotQuads(handles, FRAME)
 %this function plots one frame in the quadrotor simulation
-    global traj_data FRAME pa pb pc pd shafta shaftb orientation downwashscale downwashsize
+    global traj_data pa pb pc pd shafta shaftb orientation downwashscale downwashsize
     
     cyl_flag = traj_data(1).cyl_flag;
     if FRAME==1        
@@ -25,7 +25,11 @@ function plotQuads(handles)
     for i=1:length(traj_data)
         %get rotation matrix
         [roll,pitch]=getAngles(traj_data(i).a(:,FRAME),traj_data(i).yaw(FRAME));
-        R=getRot(traj_data(i).yaw(FRAME),roll,pitch);
+        % add in the extra roll and pitch angles
+        roll = roll + traj_data(i).extra_roll(FRAME);
+        pitch = pitch + traj_data(i).extra_pitch(FRAME);
+        
+        R=getRot(traj_data(i).yaw(FRAME),roll,pitch); % the rotation matrix
         % get new orientations
         tpa=R*pa';
         tpb=R*pb';

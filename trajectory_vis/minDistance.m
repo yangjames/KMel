@@ -1,4 +1,4 @@
-function [minXY, minXYZ] = minDistance(s)
+function [minXY, minXYZ] = minDistance(s, rotrad, width)
 
 if ~isempty(s)
     numFrames = length(s(1).timer);
@@ -13,7 +13,7 @@ minimumsXYZ = zeros(1,numFrames);
                  end
             end
         end
-        minXY = min(minimumsXY);
+        minXY = min(minimumsXY) - (width + rotrad);
     %% minimum XYZ
         for i=1:numFrames
             for j=1:length(s)
@@ -22,5 +22,5 @@ minimumsXYZ = zeros(1,numFrames);
                 end
             end
         end
-        minXYZ = min(minimumsXYZ);
+        minXYZ = min(minimumsXYZ) - (width + rotrad);
 end

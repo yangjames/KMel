@@ -22,7 +22,7 @@ function varargout = Quad_Vis2(varargin)
 
 % Edit the above text to modify the response to help Quad_Vis2
 
-% Last Modified by GUIDE v2.5 25-Jun-2013 12:11:29
+% Last Modified by GUIDE v2.5 28-Jun-2013 10:27:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -50,7 +50,7 @@ function Quad_Vis2_OpeningFcn(hObject, eventdata, handles, varargin)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
     % varargin   command line arguments to Quad_Vis2 (see VARARGIN)
-    global traj_data FRAME FLAGS pa pb pc pd shafta shaftb orientation downwashscale downwashsize
+    global traj_data rotrad quadwidth FRAME FLAGS pa pb pc pd shafta shaftb orientation downwashscale downwashsize
     traj_data = NaN;
     FRAME=1;
     PLAYFLAG=0;
@@ -87,6 +87,7 @@ function Quad_Vis2_OpeningFcn(hObject, eventdata, handles, varargin)
     orientation=[[0 0]' [0 0]' [0 .2]'];
     downwashscale=(quadwidth/2+rotrad);
     downwashsize=1;
+    
     
     % Choose default command line output for Quad_Vis
     handles.output = hObject;
@@ -171,7 +172,7 @@ function playbutton_Callback(hObject, eventdata, handles)
         FLAGS = [1,0,0];
         pauseVal = traj_data(1).delT;
     end
-    play(handles)
+    FRAME = play(handles, FRAME)
     
 
 
@@ -180,16 +181,14 @@ function framebackbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to framebackbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FRAME FLAGS traj_data
+    global FRAME FLAGS traj_data numFrames
     FLAGS = [0,0,0];
     if(FRAME >= 2)
         FRAME = FRAME -1;
-        plotQuads(handles);
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
-        set(handles.frametext, 'String', num2str(FRAME));
+        plotQuads(handles, FRAME);
+            displayFrameInfo(handles, traj_data(1).delT, numFrames, FRAME);
     elseif(FRAME==1)
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
-        set(handles.frametext, 'String', num2str(FRAME));
+        displayFrameInfo(handles, traj_data(1).delT, numFrames, FRAME);
     end
 
 
@@ -202,12 +201,10 @@ function framefwdbutton_Callback(hObject, eventdata, handles)
     FLAGS = [0,0,0];
     if(FRAME < numFrames-2)
         FRAME = FRAME +1;
-        plotQuads(handles);
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
-        set(handles.frametext, 'String', num2str(FRAME));
+        plotQuads(handles, FRAME);
+        displayFrameInfo(handles, traj_data(1).delT, numFrames, FRAME);
     elseif(FRAME>=numFrames-2)
-        set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
-        set(handles.frametext, 'String', num2str(FRAME));
+        displayFrameInfo(handles, traj_data(1).delT, numFrames, FRAME);
     end
 
 % --- Executes on button press in reversebutton.
@@ -215,11 +212,11 @@ function reversebutton_Callback(hObject, eventdata, handles)
 % hObject    handle to reversebutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FLAGS pauseVal sliderVal traj_data
+    global FLAGS pauseVal sliderVal traj_data FRAME
         if ~isempty(traj_data)
             FLAGS = [0,0,1];
             pauseVal = (1-sliderVal)*traj_data(1).delT*2;
-            play(handles);
+            FRAME = play(handles, FRAME);
         end
 
 % --- Executes on button press in forwardbutton.
@@ -227,11 +224,11 @@ function forwardbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to forwardbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FLAGS pauseVal sliderVal traj_data
+    global FLAGS pauseVal sliderVal traj_data FRAME
     if ~isempty(traj_data)
         FLAGS = [0,1,0];
         pauseVal = (1-sliderVal)*traj_data(1).delT*2;
-        play(handles);
+        FRAME = play(handles, FRAME);
     end
 
 % --- Executes on slider movement.
@@ -256,17 +253,15 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 
-
 % --- Executes on button press in beginningbutton.
 function beginningbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to beginningbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    global FRAME traj_data
+    global FRAME traj_data numFrames
     FRAME=1;
-    plotQuads(handles);
-    set(handles.timetext, 'String', strcat(num2str(traj_data(1).delT*(FRAME-1)), 's'));
-    set(handles.frametext, 'String', num2str(FRAME));
+    plotQuads(handles, FRAME);
+    displayFrameInfo(handles, traj_data(1).delT, numFrames, FRAME);
 
 % --- Executes on selection change in trajectorylist.
 function trajectorylist_Callback(hObject, eventdata, handles)
@@ -280,12 +275,6 @@ function trajectorylist_Callback(hObject, eventdata, handles)
 
 % --- Executes during object creation, after setting all properties.
 function trajectorylist_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to trajectorylist (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -302,7 +291,7 @@ menu_list=get(handles.trajectorylist,'String');
 menu_val=get(handles.trajectorylist,'Value');
 if ~isequal(menu_list{menu_val},'Select Quad Trajectory')
     %load data and initalize other fields
-    traj_data = load_traj_data(menu_list{menu_val});
+    traj_data = load_traj_data(menu_list{menu_val})
     numFrames = length(traj_data(1).timer);
     
     display_data(traj_data, handles)%display traj info
@@ -336,11 +325,6 @@ if ~isequal(menu_list{menu_val},'Select Quad Trajectory')
     
     %plot starting positions
     beginningbutton_Callback(hObject, eventdata, handles)
-    
-%     names=get(handles.trajlist,'string');
-%     temp=char(names);
-%     newname=strvcat(temp,[num2str(id),' ',menu_list{menu_val}]);
-%     set(handles.trajlist,'string',cellstr(newname))
 end
 
 
@@ -351,8 +335,6 @@ function pausebutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     global FLAGS
     FLAGS = [0,0,0];
-
-
 
 function new_delT_text_Callback(hObject, eventdata, handles)
 % hObject    handle to new_delT_text (see GCBO)
@@ -366,12 +348,6 @@ function new_delT_text_Callback(hObject, eventdata, handles)
 
 % --- Executes during object creation, after setting all properties.
 function new_delT_text_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to new_delT_text (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 global traj_data
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -383,7 +359,7 @@ function cylindersbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to cylindersbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global traj_data
+global traj_data FRAME
 for i=1:length(traj_data)
     if traj_data(i).cyl_flag == 0
         traj_data(i).cyl_flag = 1;
@@ -391,7 +367,7 @@ for i=1:length(traj_data)
         traj_data(i).cyl_flag = 0;
     end
 end
-plotQuads(handles);
+plotQuads(handles, FRAME);
 
 
 % --- Executes on selection change in quadtype.
@@ -402,7 +378,7 @@ function quadtype_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns quadtype contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from quadtype
-global pa pb pc pd shafta shaftb downwashscale downwashsize
+global pa pb pc pd shafta shaftb downwashscale downwashsize rotrad quadwidth FRAME
 
 menu_list=get(handles.quadtype,'String');
 menu_val=get(handles.quadtype,'Value');
@@ -435,7 +411,7 @@ shaft=(-quadwidth/2:0.1:quadwidth/2)';
 shaft1=zeros(length(shaft),1);
 shafta=[shaft shaft1 shaft1];
 shaftb=[shaft1 shaft shaft1];
-plotQuads(handles);
+plotQuads(handles, FRAME);
 
 % --- Executes during object creation, after setting all properties.
 function quadtype_CreateFcn(hObject, eventdata, handles)
@@ -447,4 +423,30 @@ function quadtype_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes on slider movement.
+function frameslider_Callback(hObject, eventdata, handles)
+% hObject    handle to frameslider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+global FLAGS numFrames FRAME
+
+FLAGS = [0 0 0];
+val = get(hObject, 'Value') %between 0 and 1
+FRAME = round(val*(numFrames-4)) + 1;
+plotQuads(handles, FRAME);
+
+% --- Executes during object creation, after setting all properties.
+function frameslider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to frameslider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
 end

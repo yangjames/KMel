@@ -1,4 +1,11 @@
 function traj_data = load_traj_data(varargin)
+%this function either laod data from a file located in ./trajectories or
+%updates and exsisting trajectoryand recalculates the traj_data including
+%velocity and acceleration. 
+%
+%The end of this function also has some function calls to collect
+%superelative data on the trajectory
+global rotrad quadwidth
 
 if nargin == 1 %load new trajectory
     traj_name = varargin{1};
@@ -6,13 +13,19 @@ if nargin == 1 %load new trajectory
     %data.s = rmfield(data.s, 'vel'); %remove initial velocity field
     s = data.s;
     for i=1:length(s)
-        %s(i).vel=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
+        s(i).v=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
+        % check if velocities are equal
+        s(i).vel = s(i).vel(:,1:end-1);
+        compareVelocities(s(i).vel, s(i).v)
+        s(i).vel = s(i).v;
         s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
         s(i).cyl_flag =0;
-    end
-    %make sure the cylinder flags are all off
-    for i=1:length(s)
-        s(i).cyl_flag = 0;
+        if (isfield(s(i), {'extra_roll', 'extra_pitch'}) == [0 0]) |...
+                (isempty(s(i).extra_roll) && isempty(s(i).extra_pitch))
+            s(i).extra_roll = zeros(1, length(s(i).yaw));
+            s(i).extra_pitch = zeros(1, length(s(i).yaw));
+        else
+        end
     end
     
    traj_data=s;
@@ -33,8 +46,10 @@ elseif nargin == 2 %update an existing trajectory
         s(i).vel=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
         s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
     end
+    
     traj_data=s;
 end
-[traj_data(1).minXY traj_data(1).minXYZ] = minDistance(traj_data);
+[traj_data(1).minXY traj_data(1).minXYZ] = minDistance(traj_data, rotrad, quadwidth);
 [traj_data(1).maxV traj_data(1).maxA] = maxVandA(traj_data);
 [traj_data(1).minThrust traj_data(1).maxThrust] = thrustRange(traj_data);
+[traj_data(1).maxRoll traj_data(1).maxPitch] = getMaxAngles(traj_data);
