@@ -93,7 +93,7 @@ function plotQuads(handles, FRAME)
 %                 set(traj_data(i).rotcplot, 'Color', 'g');
 %         end
 %             
-    end
+    
         % replot quadrotor blades
         set(traj_data(i).rotaplot,'XData',tpa(1,:)+traj_data(i).pos(1,FRAME), ...
                             'YData',tpa(2,:)+traj_data(i).pos(2,FRAME), ...
@@ -122,4 +122,5 @@ function plotQuads(handles, FRAME)
         set(traj_data(i).orientation,'XData',torientation(1,:)+traj_data(i).pos(1,FRAME), ...
                                 'YData',torientation(2,:)+traj_data(i).pos(2,FRAME), ...
                                 'ZData',torientation(3,:)+traj_data(i).pos(3,FRAME));
+    end
 end
