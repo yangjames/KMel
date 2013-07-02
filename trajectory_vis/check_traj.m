@@ -52,7 +52,7 @@ end
 max_pos_diff = max_vel*dt;
 max_vel_diff = max_accel*dt;
 max_yaw_diff = max_yaw_rate*dt;
-quad%s 
+
 %check the large position change for all quads
 for i=1:numquads
     if(max(max(abs(s(i).pos(:,2:end)-s(i).pos(:,1:end-1)))) > max_pos_diff)

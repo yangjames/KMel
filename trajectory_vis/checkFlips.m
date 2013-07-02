@@ -12,13 +12,13 @@ for i=1:length(s)
             switch s(i).flip_cmd(j)
                 case 1
                     %barrel roll left
-                    s(i).flipFlags(j:j+numFlipFrames) = 1;
+                    s(i).flipFlags(j:j+numFlipFrames) = 5;
                 case 5
                     %barrel roll right
-                    s(i).flipFlags(j:j+numFlipFrames) = 3;
+                    s(i).flipFlags(j:j+numFlipFrames) = 1;
                 case 3
                     %front flip
-                    s(i).flipFlags(j:j+numFlipFrames) = 5;
+                    s(i).flipFlags(j:j+numFlipFrames) = 3;
                 case 7
                     %back flip
                     s(i).flipFlags(j:j+numFlipFrames) = 7;

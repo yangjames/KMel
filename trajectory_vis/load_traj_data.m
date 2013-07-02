@@ -12,13 +12,13 @@ if nargin == 1 %load new trajectory
     data = load(['trajectories/', traj_name]);
     s = data.s;
     
-    
+    error_flg = 0;
     for i=1:length(s)
         s(i).v=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
         % check if velocities are equal
         s(i).vel = s(i).vel(:,1:end-1);
         if compareVelocities(s(i).vel, s(i).v) == 1
-            fprintf('given veolcity and calculated velocities do not match!');
+            error_flg = 1;
         end
         s(i).vel = s(i).v;
         % calculate the acceleration
@@ -31,6 +31,9 @@ if nargin == 1 %load new trajectory
             s(i).pitch_extra = zeros(1, length(s(i).yaw));
             s(i).flip_cmd = zeros(1, length(s(i).yaw));
         end
+    end
+    if(error_flg == 1)
+        fprintf('given and calculated velocities do not match!');
     end
     s = checkFlips(s);
     check_traj(s);

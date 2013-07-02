@@ -77,12 +77,12 @@ function plotQuads(handles, FRAME)
                 set(traj_data(i).rotbplot, 'Color', 'r');
                 set(traj_data(i).rotcplot, 'Color', 'r');
                 set(traj_data(i).rotdplot, 'Color', 'r');
-            case 1 %left flip
-                set(traj_data(i).rotcplot, 'Color', 'g');
-                set(traj_data(i).rotaplot, 'Color', 'g');
-            case 5 %right flip
+            case 1 %right flip
                 set(traj_data(i).rotdplot, 'Color', 'g');
                 set(traj_data(i).rotbplot, 'Color', 'g');
+            case 5 %left flip
+                set(traj_data(i).rotaplot, 'Color', 'g');
+                set(traj_data(i).rotcplot, 'Color', 'g');
             case 3 %front flip
                 set(traj_data(i).rotaplot, 'Color', 'g');
                 set(traj_data(i).rotdplot, 'Color', 'g');
