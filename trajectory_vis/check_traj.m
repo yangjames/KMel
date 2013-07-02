@@ -17,9 +17,13 @@ dt = s(1).delT;
 
 %check the size of all vectors
 for i =1:numquads
-    if(size(s(i).vel,2)~=n)
+    if(size(s(i).vel,2)~=n-1)
         check = 1;
         fprintf('velocity is not the correct length: %d\n',i)
+    end
+    if(size(s(i).a, 2)~=n-2)
+        check=1;
+        fprintf('acceleration is not the correct length: %d\n', i)
     end
     if(size(s(i).pos,2)~=n)
         check = 1;
@@ -48,7 +52,7 @@ end
 max_pos_diff = max_vel*dt;
 max_vel_diff = max_accel*dt;
 max_yaw_diff = max_yaw_rate*dt;
-
+quad%s 
 %check the large position change for all quads
 for i=1:numquads
     if(max(max(abs(s(i).pos(:,2:end)-s(i).pos(:,1:end-1)))) > max_pos_diff)
@@ -125,9 +129,9 @@ end
 
 
 if(check==0)
-    fprintf('TRAJ PASSED\n')
+    fprintf('TRAJECTORY PASSED\n')
     fprintf('numquads: %d\n',numquads);
-    fprintf('number of points: %d\n',n);
+    fprintf('number of points: %d\n',n-2);
     fprintf('x bounds: %f, %f\n',minx,maxx);
     fprintf('y bounds: %f, %f\n',miny,maxy);
     fprintf('z bounds: %f, %f\n',minz,maxz);

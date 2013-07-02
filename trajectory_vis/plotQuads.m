@@ -79,12 +79,16 @@ function plotQuads(handles, FRAME)
                 set(traj_data(i).rotdplot, 'Color', 'r');
             case 1 %left flip
                 set(traj_data(i).rotcplot, 'Color', 'g');
+                set(traj_data(i).rotaplot, 'Color', 'g');
             case 5 %right flip
                 set(traj_data(i).rotdplot, 'Color', 'g');
+                set(traj_data(i).rotbplot, 'Color', 'g');
             case 3 %front flip
                 set(traj_data(i).rotaplot, 'Color', 'g');
+                set(traj_data(i).rotdplot, 'Color', 'g');
             case 7 %back flip
                 set(traj_data(i).rotbplot, 'Color', 'g');
+                set(traj_data(i).rotcplot, 'Color', 'g');
         end
             
         % replot quadrotor blades

@@ -17,10 +17,13 @@ dt = s(1).delT;
 
 %check the size of all vectors
 for i =1:numquads
-    if(size(s(i).vel,2)~=n)
+    if(size(s(i).vel,2)~=n-1)
         check = 1;
         fprintf('velocity is not the correct length: %d\n',i)
     end
+    if(size(s(i).a, 2)~=n-2)
+        check=1;
+        fprintf('acceleration is not the correct length: %d\n', i)
     if(size(s(i).pos,2)~=n)
         check = 1;
         fprintf('position is not the correct length: %d\n',i)

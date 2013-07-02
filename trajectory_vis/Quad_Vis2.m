@@ -57,12 +57,11 @@ function Quad_Vis2_OpeningFcn(hObject, eventdata, handles, varargin)
     FFLAG=0;
     RFLAG=0;
     FLAGS = [PLAYFLAG, FFLAG, RFLAG];
-    handles
     possible_trajectories=dir('./trajectories');
     set(handles.trajectorylist,'String',['Select Quad Trajectory' {possible_trajectories(3:end).name}]);
     
     quadtypelist={'Select Vehicle','Nano+','Toy'};
-    set(handles.quadtype,'String',quadtypelist)
+    set(handles.quadtype,'String',quadtypelist);
     
     %% QUAD PLOT VARIABLES
     rotrad=2*0.0254;
@@ -291,7 +290,7 @@ menu_list=get(handles.trajectorylist,'String');
 menu_val=get(handles.trajectorylist,'Value');
 if ~isequal(menu_list{menu_val},'Select Quad Trajectory')
     %load data and initalize other fields
-    traj_data = load_traj_data(menu_list{menu_val})
+    traj_data = load_traj_data(menu_list{menu_val});
     numFrames = length(traj_data(1).timer);
     
     display_data(traj_data, handles)%display traj info
@@ -433,12 +432,13 @@ function frameslider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-global FLAGS numFrames FRAME
+global FLAGS numFrames FRAME traj_data
 
 FLAGS = [0 0 0];
-val = get(hObject, 'Value') %between 0 and 1
+val = get(hObject, 'Value'); %between 0 and 1
 FRAME = round(val*(numFrames-4)) + 1;
 plotQuads(handles, FRAME);
+displayFrameInfo(handles, traj_data(1).delT, numFrames, FRAME);
 
 % --- Executes during object creation, after setting all properties.
 function frameslider_CreateFcn(hObject, eventdata, handles)
