@@ -28,7 +28,7 @@ if nargin == 1 %load new trajectory
         else
         end
     end
-    %s = checkFlips(s);
+    s = checkFlips(s);
     %check_traj(s);
     traj_data=s;
 elseif nargin == 2 %update an existing trajectory
@@ -48,7 +48,7 @@ elseif nargin == 2 %update an existing trajectory
         s(i).vel=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
         s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
     end
-    %s = checkFlips;
+    s = checkFlips;
     %check_traj(s);
     traj_data=s;
 end
