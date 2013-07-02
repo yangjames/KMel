@@ -16,7 +16,7 @@ function error = compareVelocities(v1,v2)
         end
         if(diff(i) > diff_thres)
             count = count + 1;
-            fprintf('velocity differs by %dm/s at frame %d\n', diff(i), i);
+            %fprintf('velocity differs by %dm/s at frame %d\n', diff(i), i);
         end
     end
     if count == 0

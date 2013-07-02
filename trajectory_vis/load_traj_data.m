@@ -20,9 +20,8 @@ if nargin == 1 %load new trajectory
         if compareVelocities(s(i).vel, s(i).v) == 1
             error_flg = 1;
         end
-        s(i).vel = s(i).v;
-        % calculate the acceleration
-        s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
+        %s(i).vel = s(i).v; % uncomment this line to use calculate velocity
+        s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT; % calculate the acceleration
         s(i).cyl_flag =0; %flag for cylinders
         % if not already there add extra angles and flip fields (all or
         if (isfield(s(i), {'roll_extra', 'pitch_extra', 'flip_cmd'}) == [0 0 0]) |...
@@ -55,7 +54,7 @@ elseif nargin == 2 %update an existing trajectory
         s(i).vel=(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))/s(i).delT;
         s(i).a=(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))/s(i).delT;
     end
-    s = checkFlips;
+    s = checkFlips(s);
     check_traj(s);
     traj_data=s;
 end

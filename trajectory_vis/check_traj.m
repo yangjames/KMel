@@ -6,7 +6,7 @@ max_vel      = 5;  %m/s
 max_yaw_rate = 3;  %rad/s
 
 
-min_sep     = 1.0; %min distance between vehicles
+min_sep     = .5; %min distance between vehicles (m)
 z_safe_zone = 0.1; %if vehicles are this far away in z then they can collide
 
 check = 0;
@@ -48,23 +48,25 @@ for i =1:numquads
 end
 
 
-
+% 
 max_pos_diff = max_vel*dt;
 max_vel_diff = max_accel*dt;
 max_yaw_diff = max_yaw_rate*dt;
 
 %check the large position change for all quads
 for i=1:numquads
-    if(max(max(abs(s(i).pos(:,2:end)-s(i).pos(:,1:end-1)))) > max_pos_diff)
+    [cur_max_pos_diff frame] = max(max(abs(s(i).pos(:,2:end)-s(i).pos(:,1:end-1))));
+    if( cur_max_pos_diff > max_pos_diff)
         check = 2;
-        fprintf('position jump too large: %d\n',i)
+        fprintf('position jump too large: quad:%d pos frame:%d\n',i, frame)
     end
 end
-
+%check for large velocity change
 for i=1:numquads
-    if(max(max(abs(s(i).vel(:,2:end)-s(i).vel(:,1:end-1)))) > max_vel_diff)
+    [cur_max_vel_diff frame] = max(max(abs(s(i).vel(:,2:end)-s(i).vel(:,1:end-1))));
+    if( cur_max_vel_diff > max_vel_diff)
         check = 2;
-        fprintf('velocity jump too large: %d\n',i)
+        fprintf('velocity jump too large: quad:%d frame:%d\n',i, frame)
     end
 end
 
@@ -74,17 +76,28 @@ for i=1:numquads
     yawdiff = yawdiff + (yawdiff>6)*(-2*pi); 
     yawdiff = yawdiff + (yawdiff<-6)*(2*pi);
     
-    if(max(abs(yawdiff)) > max_yaw_diff )
+    [cur_max frame] = max(abs(yawdiff));
+    if(cur_max > max_yaw_diff )
         check = 2;
-        fprintf('yaw jump too large: %d\n',i)
+        fprintf('yaw jump too large: quad:%d dyaw=%drad/s frame:%d\n',i,cur_max/dt, frame)
     end
 end
 
 %check the magnitude of the velocities
 for i=1:numquads
-    if(max(max(s(i).vel))>max_vel)
+    [cur_max frame] = max(max(s(i).vel));
+    if(cur_max>max_vel)
         check = 3;
-        fprintf('velocity too large: %d\n',i)
+        fprintf('velocity too large: quad:%d, v=%dm/s, frame:%d\n',i,cur_max, frame)
+    end
+end
+
+%check the magnitude of the accelerations
+for i=1:numquads
+    [cur_max_acc frame] = max(max(s(i).a));
+    if(cur_max_acc>max_accel)
+        check = 3;
+        fprintf('acceleration too large: quad:%d, a=%dm/s/s, frame:%d\n',i,cur_max_acc, frame)
     end
 end
 
@@ -95,11 +108,11 @@ for i=1:numquads
         pos_diff = s(i).pos-s(j).pos;
         idx_check = find(abs(pos_diff(3,:))<=z_safe_zone);
         
-        min_lateral_dist = min(sqrt(sum(pos_diff(1:2,idx_check).^2)));
+        [min_lateral_dist index] = min(sqrt(sum(pos_diff(1:2,idx_check).^2)));
         
         if(min_lateral_dist<=min_sep)
             check = 4;
-            fprintf('vehicles too close: %d, %d, %f\n',i,j,min_lateral_dist)
+            fprintf('vehicles too close: quads:%d and %d, d=%f, frame=%d\n',i,j,min_lateral_dist, idx_check(index))
         end
     end
 end
@@ -135,7 +148,7 @@ if(check==0)
     fprintf('x bounds: %f, %f\n',minx,maxx);
     fprintf('y bounds: %f, %f\n',miny,maxy);
     fprintf('z bounds: %f, %f\n',minz,maxz);
-
 else
     fprintf('TRAJ FAILED\n')
+end
 end
